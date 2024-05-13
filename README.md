@@ -1,4 +1,4 @@
-# Railway CLI
+# Spigotfly CLI
 
 [![Crates.io](https://img.shields.io/crates/v/spigotfly)](https://crates.io/crates/spigotfly)
 
