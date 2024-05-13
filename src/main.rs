@@ -5,6 +5,9 @@ use std::f32::consts::E;
 
 use args::SearchCommand;
 use clap::Parser;
+use reqwest::blocking::RequestBuilder;
+use reqwest::blocking::Response;
+use reqwest::header::USER_AGENT;
 
 use std::fs::File;
 use std::io::copy;
@@ -42,19 +45,24 @@ struct Resource {
     id: u32,
 }
 
-fn search(search_command: &SearchCommand) -> Result<(), Box<dyn Error>> {
-    if search_command.query.len() == 0 {
-        return Err("query must be specified. Check 'spigotfly search --help'".into());
-    }
+fn new_request(url: &String) -> Result<Response, reqwest::Error> {
+    let client = reqwest::blocking::Client::new();
+    client
+    .get(url)
+    .header(USER_AGENT, "spigotfly")
+    .send()
+}
 
-    let mut url = format!(
-        "https://api.spiget.org/v2/search/resources/{}",
-        search_command.query.join("%20")
+fn search(search_command: &SearchCommand) -> Result<(), Box<dyn Error>> {
+    let url = format!(
+        "https://api.spiget.org/v2/search/resources/{}?field={}&size={}&page={}",
+        search_command.query.join("%20"),
+        search_command.field.as_text(),
+        search_command.size,
+        search_command.page,
     );
-    if search_command.tag {
-        url.push_str("?field=tag");
-    }
-    let resp = reqwest::blocking::get(url)?.json::<Vec<Resource>>()?;
+  
+    let resp = new_request(&url)?.json::<Vec<Resource>>()?;
 
     for resource in resp {
         println!("{} | {} | {}", resource.id, resource.name, resource.tag)
@@ -62,10 +70,11 @@ fn search(search_command: &SearchCommand) -> Result<(), Box<dyn Error>> {
     Ok(())
 }
 
+
 fn download(id: u32) -> Result<(), Box<dyn Error>> {
     let url = format!("https://api.spiget.org/v2/resources/{}/download", id);
-    let resp = reqwest::blocking::get(url)?;
-
+    let resp = new_request(&url)?;
+ 
     match resp.status().as_u16() {
         302 => {
             return Err("File found Redirect to the file direct download OR the url of externally hosted resources".into());
