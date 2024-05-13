@@ -1,41 +1,42 @@
-# .github/workflows/release.yml
+jobs:
+  release:
+    name: Release - ${{ matrix.platform.release_for }}
+    strategy:
+      matrix:
+        platform:
+          - release_for: FreeBSD-x86_64
+            os: ubuntu-20.04
+            target: x86_64-unknown-freebsd
+            bin: precious
+            name: precious-FreeBSD-x86_64.tar.gz
+            command: build
 
- on:
+          - release_for: Windows-x86_64
+            os: windows-latest
+            target: x86_64-pc-windows-msvc
+            bin: precious.exe
+            name: precious-Windows-x86_64.zip
+            command: both
 
-   release:
+          - release_for: macOS-x86_64
+            os: macOS-latest
+            target: x86_64-apple-darwin
+            bin: precious
+            name: precious-Darwin-x86_64.tar.gz
+            command: both
 
-     types: [created]
+            # more release targets here ...
 
- 
+    runs-on: ${{ matrix.platform.os }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+      - name: Build binary
+        uses: houseabsolute/actions-rust-cross@v0
+        with:
+          command: ${{ matrix.platform.command }}
+          target: ${{ matrix.platform.target }}
+          args: "--locked --release"
+          strip: true
 
- jobs:
-
-   release:
-
-     name: release ${{ matrix.target }}
-
-     runs-on: ubuntu-latest
-
-     strategy:
-
-       fail-fast: false
-
-       matrix:
-
-         target: [x86_64-pc-windows-gnu, x86_64-unknown-linux-musl, x86_64-apple-darwin]
-
-     steps:
-
-       - uses: actions/checkout@master
-
-       - name: Compile and release
-
-         uses: rust-build/rust-build.action@v1.4.5
-
-         env:
-
-           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
-         with:
-
-           RUSTTARGET: ${{ matrix.target }}
+    # more packaging stuff goes here ...
