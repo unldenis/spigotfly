@@ -12,7 +12,6 @@ The Spigotfly CLI allows you to
 `spigotfly` is written in [Rust](https://www.rust-lang.org/), and thus requires the Rust toolchain to compile.
 Follow the instructions at <https://www.rust-lang.org/tools/install> to install the toolchain.
 Once that is complete, execute the following command:
-### Cargo
 ```bash
 cargo install spigotfly
 ```
