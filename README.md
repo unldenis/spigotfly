@@ -32,4 +32,4 @@ Options:
   -V, --version  Print version
 
 C:\Users\User>
-```bash
+```
