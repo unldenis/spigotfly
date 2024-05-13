@@ -54,6 +54,10 @@ impl Field {
 
 #[derive(Debug, Args)]
 pub struct DownloadCommand {
-    /// Text to be searched
+    /// Resource id to download
     pub id: u32,
+
+    /// Plugin jar file name. The id is the default
+    #[clap(short, long)]
+    pub output: Option<String>,
 }

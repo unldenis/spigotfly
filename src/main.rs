@@ -2,6 +2,7 @@ mod args;
 
 use std::error::Error;
 
+use args::DownloadCommand;
 use tabled::{builder::Builder, settings::Style};
 
 use args::SearchCommand;
@@ -31,7 +32,7 @@ fn execute(args: &SpigotflyArgs) -> Result<(), Box<dyn Error>> {
             return search(&search_command);
         }
         SpigotflyCommand::Download(download_command) => {
-            return download(download_command.id);
+            return download(&download_command);
         }
     }
 }
@@ -93,8 +94,8 @@ fn search(search_command: &SearchCommand) -> Result<(), Box<dyn Error>> {
     Ok(())
 }
 
-fn download(id: u32) -> Result<(), Box<dyn Error>> {
-    let url = format!("https://api.spiget.org/v2/resources/{}/download", id);
+fn download(download_command : &DownloadCommand) -> Result<(), Box<dyn Error>> {
+    let url = format!("https://api.spiget.org/v2/resources/{}/download", download_command.id);
     let resp = new_request(&url)?;
 
     match resp.status().as_u16() {
@@ -108,8 +109,12 @@ fn download(id: u32) -> Result<(), Box<dyn Error>> {
         _ => {}
     }
 
-    // Apri un file per scrivere il contenuto del plugin
-    let mut file = File::create(format!("{}.jar", id))?;
+    let file_name = match &download_command.output {
+        Some(output) => format!("{}.jar", output),
+        None => format!("{}.jar", download_command.id)
+    };
+    
+    let mut file = File::create(file_name)?;
 
     // Copia il contenuto della risposta HTTP nel file
     let _ = copy(&mut resp.bytes()?.as_ref(), &mut file)?;
