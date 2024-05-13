@@ -9,6 +9,9 @@ The Spigotfly CLI allows you to
 - Download a resource
 
 ## Installation
+Spigotfly builds can be downloaded in the GitHub release page.
+Alternatively, you could install it using the Cargo package manager.
+
 `spigotfly` is written in [Rust](https://www.rust-lang.org/), and thus requires the Rust toolchain to compile.
 Follow the instructions at <https://www.rust-lang.org/tools/install> to install the toolchain.
 Once that is complete, execute the following command:
