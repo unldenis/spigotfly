@@ -15,3 +15,21 @@ The Spigotfly CLI allows you to
 cargo install spigotfly
 ```
 
+## Usage
+```bash
+C:\Users\User>spigotfly
+Command line tool for downloading spigot plugins
+
+Usage: spigotfly <COMMAND>
+
+Commands:
+  search    Search a resource
+  download  Download a resource by id
+  help      Print this message or the help of the given subcommand(s)
+
+Options:
+  -h, --help     Print help
+  -V, --version  Print version
+
+C:\Users\User>
+```bash
